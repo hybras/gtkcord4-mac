@@ -1,0 +1,41 @@
+name: Package
+
+on:
+  push:
+    tags: ['v[0-9]+.[0-9]+.[0-9]+*']
+  workflow_dispatch:
+
+jobs:
+  package:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Homebrew
+        id: brew
+        uses: Homebrew/actions/setup-homebrew@master
+      - name: Install Deps
+        id: deps
+        run: brew install go gobject-introspection gtk4
+      - name: Build gtkcord4
+        id: build
+        run: |
+          cd gtkcord4
+          go build
+      - name: Create .app
+        run: |
+          cd gtkcord
+          go run ../macapp.go \
+            -assets ./internal/icons/png \
+            -bin ./gtkcord4 \
+            -icon ./internal/icons/png/logo.png \
+            -identifier "com.github.diamondburned.gtkcord4" \
+            -name gtkcord4
+          cp ./gtkcord4 ./gtkcord4.app/Contents/Macos
+          plutil -remove LSUIElement gtkcord4.app/Contents/Info.plist
+          plutil -remove CFBundleExecutable gtkcord4.app/Contents/Info.plist
+          plutil -insert CFBundleDisplayName -string gtkcord4 gtkcord4.app/Contents/Info.plist
+      - name: Create .dmg
+        run: |
+          brew install node graphicsmagick imagemagick
+          cp LICENSE.md license.txt
+          npx create-dmg --dmg-title=gtkcord4 gtkcord4.app
