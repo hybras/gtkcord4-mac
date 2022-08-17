@@ -3,13 +3,16 @@ name: Package
 on:
   push:
     tags: ['v[0-9]+.[0-9]+.[0-9]+*']
+    branches: ['master']
   workflow_dispatch:
 
 jobs:
   package:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+        with:
+          submodules: 'true'
       - name: Set up Homebrew
         id: brew
         uses: Homebrew/actions/setup-homebrew@master
