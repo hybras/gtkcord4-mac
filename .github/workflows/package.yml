@@ -15,13 +15,14 @@ jobs:
         uses: Homebrew/actions/setup-homebrew@master
       - name: Install Deps
         id: deps
-        run: brew install go gobject-introspection gtk4
+        run: brew install go@1.17 gobject-introspection gtk4
       - name: Build gtkcord4
         id: build
         run: |
           cd gtkcord4
           go build
       - name: Create .app
+        id: app
         run: |
           cd gtkcord
           go run ../macapp.go \
@@ -35,6 +36,7 @@ jobs:
           plutil -remove CFBundleExecutable gtkcord4.app/Contents/Info.plist
           plutil -insert CFBundleDisplayName -string gtkcord4 gtkcord4.app/Contents/Info.plist
       - name: Create .dmg
+        id: dmg
         run: |
           brew install node graphicsmagick imagemagick
           cp LICENSE.md license.txt
