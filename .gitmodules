@@ -1,0 +1,4 @@
+[submodule "gtkcord4"]
+	path = gtkcord4
+	url = https://github.com/diamondburned/gtkcord4
+	branch = release
