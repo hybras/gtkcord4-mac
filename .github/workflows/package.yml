@@ -15,15 +15,14 @@ jobs:
       - name: Install Deps
         id: deps
         run: brew install gobject-introspection gtk4 # go is preinstalled on the macos runner
+      - run: cd gtkcord4
       - name: Build gtkcord4
         id: build
         run: |
-          cd gtkcord4
           go build
       - name: Create .app
         id: app
         run: |
-          cd gtkcord
           go run ../macapp.go \
             -assets ./internal/icons/png \
             -bin ./gtkcord4 \
